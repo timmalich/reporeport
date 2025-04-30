@@ -36,17 +36,20 @@ cat > "$OUT_HTML" <<'EOF'
 </head>
 <body>
   <h2>GitHub Repository Report</h2>
+  <input type="text" id="searchBarInput" onkeyup="filterTable()" placeholder="Search for repositories...">
+
   <table id="repoTable">
     <thead>
       <tr>
-        <th onclick="sortTable(0)">Org</th>
-        <th onclick="sortTable(1)">Repo Name</th>
-        <th onclick="sortTable(2)">Repo URI</th>
-        <th onclick="sortTable(3)">Component</th>
-        <th onclick="sortTable(4)">Description</th>
-        <th onclick="sortTable(5)">Code Owners</th>
-        <th onclick="sortTable(6)">Experts</th>
-        <th onclick="sortTable(7)">Notes</th>
+        <th onclick="sortTable(0)">Org<br><input type="text" onkeyup="filterColumn(0)" placeholder="Filter Org"></th>
+        <th onclick="sortTable(1)">Repo Name<br><input type="text" onkeyup="filterColumn(1)" placeholder="Filter Repo Name"></th>
+        <th onclick="sortTable(2)">Repo URI<br><input type="text" onkeyup="filterColumn(2)" placeholder="Filter Repo URI"></th>
+        <th onclick="sortTable(3)">Component<br><input type="text" onkeyup="filterColumn(3)" placeholder="Filter Component"></th>
+        <th onclick="sortTable(4)">Description<br><input type="text" onkeyup="filterColumn(4)" placeholder="Filter Description"></th>
+        <th onclick="sortTable(5)">Code Owners<br><input type="text" onkeyup="filterColumn(5)" placeholder="Filter Code Owners"></th>
+        <th onclick="sortTable(6)">Experts<br><input type="text" onkeyup="filterColumn(6)" placeholder="Filter Experts"></th>
+        <th onclick="sortTable(7)">Notes<br><input type="text" onkeyup="filterColumn(7)" placeholder="Filter Notes"></th>
+
       </tr>
     </thead>
     <tbody>
@@ -111,21 +114,53 @@ cat >> "$OUT_HTML" <<'EOF'
   </table>
   <script>
     function sortTable(n) {
-      var table = document.getElementById("repoTable"),
-          rows = table.tBodies[0].rows,
-          switching = true, dir = "asc";
-      while (switching) {
-        switching = false;
-        for (let i=0; i<rows.length-1; i++) {
-          let x = rows[i].cells[n].textContent.toLowerCase(),
-              y = rows[i+1].cells[n].textContent.toLowerCase(),
-              shouldSwitch = (dir==="asc" ? x>y : x<y);
-          if (shouldSwitch) {
-            rows[i].parentNode.insertBefore(rows[i+1], rows[i]);
-            switching = true;
+      const table = document.getElementById("repoTable");
+      const rows = Array.from(table.tBodies[0].rows);
+      const currentDir = table.getAttribute("data-sort-dir") === "asc" ? "desc" : "asc";
+
+      rows.sort((rowA, rowB) => {
+        const cellA = rowA.cells[n].textContent.toLowerCase();
+        const cellB = rowB.cells[n].textContent.toLowerCase();
+        return currentDir === "asc" ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+      });
+
+      rows.forEach(row => table.tBodies[0].appendChild(row));
+      table.setAttribute("data-sort-dir", currentDir);
+    }
+
+    function filterColumn(columnIndex) {
+      const table = document.getElementById("repoTable");
+      const rows = table.getElementsByTagName("tr");
+      const input = table.tHead.rows[0].cells[columnIndex].getElementsByTagName("input")[0];
+      const filter = input.value.toLowerCase();
+
+      for (let i = 1; i < rows.length; i++) { // Skip the header row
+        const cell = rows[i].cells[columnIndex];
+        if (cell) {
+          const text = cell.textContent.toLowerCase();
+          rows[i].style.display = text.includes(filter) ? "" : "none";
+        }
+      }
+    }
+
+     function filterTable() {
+      const input = document.getElementById("searchBarInput");
+      const filter = input.value.toLowerCase();
+      const table = document.getElementById("repoTable");
+      const rows = table.getElementsByTagName("tr");
+
+      for (let i = 1; i < rows.length; i++) { // Skip the header row
+        const cells = rows[i].getElementsByTagName("td");
+        let match = false;
+
+        for (let j = 0; j < cells.length; j++) {
+          if (cells[j] && cells[j].textContent.toLowerCase().includes(filter)) {
+            match = true;
+            break;
           }
         }
-        if (!switching && dir==="asc") { dir="desc"; switching=true; }
+
+        rows[i].style.display = match ? "" : "none";
       }
     }
   </script>
