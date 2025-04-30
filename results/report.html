@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>GitHub Repo Report</title>
+  <style>
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 8px; }
+    th { cursor: pointer; background-color: #f2f2f2; }
+    pre { margin:0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  </style>
+</head>
+<body>
+  <h2>GitHub Repository Report</h2>
+  <input type="text" id="searchBarInput" onkeyup="filterTable()" placeholder="Search for repositories...">
+
+  <table id="repoTable">
+    <thead>
+      <tr>
+        <th onclick="sortTable(0)">Org<br><input type="text" onkeyup="filterColumn(0)" placeholder="Filter Org"></th>
+        <th onclick="sortTable(1)">Repo Name<br><input type="text" onkeyup="filterColumn(1)" placeholder="Filter Repo Name"></th>
+        <th onclick="sortTable(2)">Repo URI<br><input type="text" onkeyup="filterColumn(2)" placeholder="Filter Repo URI"></th>
+        <th onclick="sortTable(3)">Component<br><input type="text" onkeyup="filterColumn(3)" placeholder="Filter Component"></th>
+        <th onclick="sortTable(4)">Description<br><input type="text" onkeyup="filterColumn(4)" placeholder="Filter Description"></th>
+        <th onclick="sortTable(5)">Code Owners<br><input type="text" onkeyup="filterColumn(5)" placeholder="Filter Code Owners"></th>
+        <th onclick="sortTable(6)">Experts<br><input type="text" onkeyup="filterColumn(6)" placeholder="Filter Experts"></th>
+        <th onclick="sortTable(7)">Notes<br><input type="text" onkeyup="filterColumn(7)" placeholder="Filter Notes"></th>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr> <td>timmalich</td> <td>reporeport</td> <td><a href="https://github.com/timmalich/reporeport">https://github.com/timmalich/reporeport</a></td> <td>just fun</td> <td>Simple scraper to generate are report about all repositories across multiple organizations</td> <td>timmalich </td> <td>Tim <td>Was just to lazy to create the excel for more than 200 repos by hand.<br /> Might got a bit carried away though.</td> </tr>
+      <tr> <td>timmalich</td> <td>edukiz</td> <td><a href="https://github.com/timmalich/edukiz">https://github.com/timmalich/edukiz</a></td> <td>just fun</td> <td>Simple HTML/JS educational games for children</td> <td></td> <td>Tim <td>Yeah, we got notes</td> </tr>
+      <tr> <td>timmalich</td> <td>openiam</td> <td><a href="https://github.com/timmalich/openiam">https://github.com/timmalich/openiam</a></td> <td></td> <td>Dummy project for job candidates </td> <td></td> <td> <td></td> </tr>
+      <tr> <td>timmalich</td> <td>cheatSheet</td> <td><a href="https://github.com/timmalich/cheatSheet">https://github.com/timmalich/cheatSheet</a></td> <td></td> <td>my cheat sheet</td> <td></td> <td> <td></td> </tr>
+      <tr> <td>timmalich</td> <td>codekatas</td> <td><a href="https://github.com/timmalich/codekatas">https://github.com/timmalich/codekatas</a></td> <td></td> <td>Custom Code Katas</td> <td></td> <td> <td></td> </tr>
+      <tr> <td>timmalich</td> <td>postgresql-query-tuning-for-dummies</td> <td><a href="https://github.com/timmalich/postgresql-query-tuning-for-dummies">https://github.com/timmalich/postgresql-query-tuning-for-dummies</a></td> <td></td> <td>Repository with a containered Postgresql, dummy data and Query Tuning Samples</td> <td></td> <td> <td></td> </tr>
+      <tr> <td>timmalich</td> <td>playground</td> <td><a href="https://github.com/timmalich/playground">https://github.com/timmalich/playground</a></td> <td></td> <td>nothing good in here. just a place for me where i can persist my junk code</td> <td></td> <td> <td></td> </tr>
+      <tr> <td>timmalich</td> <td>fiqlmybatis</td> <td><a href="https://github.com/timmalich/fiqlmybatis">https://github.com/timmalich/fiqlmybatis</a></td> <td></td> <td>Just an example project that combines Mybatis with a RSQL/FIQL parser.</td> <td></td> <td> <td></td> </tr>
+      <tr> <td>timmalich</td> <td>charts</td> <td><a href="https://github.com/timmalich/charts">https://github.com/timmalich/charts</a></td> <td></td> <td>Hazelcast Official Helm Chart Repository</td> <td></td> <td> <td></td> </tr>
+      <tr> <td>timmalich</td> <td>edukiz_live</td> <td><a href="https://github.com/timmalich/edukiz_live">https://github.com/timmalich/edukiz_live</a></td> <td></td> <td>https://github.com/timmalich/edukiz/ distribution</td> <td></td> <td> <td></td> </tr>
+      <tr> <td>timmalich</td> <td>task</td> <td><a href="https://github.com/timmalich/task">https://github.com/timmalich/task</a></td> <td></td> <td>A task runner / simpler Make alternative written in Go</td> <td></td> <td> <td></td> </tr>
+      <tr> <td>timmalich</td> <td>fable-spring-read-replica</td> <td><a href="https://github.com/timmalich/fable-spring-read-replica">https://github.com/timmalich/fable-spring-read-replica</a></td> <td></td> <td>An example of splitting read and write database operations using Spring Boot 2.0</td> <td></td> <td> <td></td> </tr>
+      <tr> <td>timmalich</td> <td>hibernate-types</td> <td><a href="https://github.com/timmalich/hibernate-types">https://github.com/timmalich/hibernate-types</a></td> <td></td> <td>The Hibernate Types library gives you extra types that are not supported by the Hibernate ORM core.</td> <td></td> <td> <td></td> </tr>
+      <tr> <td>timmalich</td> <td>rsql-parser</td> <td><a href="https://github.com/timmalich/rsql-parser">https://github.com/timmalich/rsql-parser</a></td> <td></td> <td>Parser for RSQL / FIQL – query language for RESTful APIs</td> <td></td> <td> <td></td> </tr>
+      <tr> <td>timmalich</td> <td>spring-boot-Olingo-oData</td> <td><a href="https://github.com/timmalich/spring-boot-Olingo-oData">https://github.com/timmalich/spring-boot-Olingo-oData</a></td> <td></td> <td>Template Project showing how to use Spring Boot and Olingo for creating oData based Rest Services</td> <td></td> <td> <td></td> </tr>
+      <tr> <td>timmalich</td> <td>NodeJs-Raspberry-Pi</td> <td><a href="https://github.com/timmalich/NodeJs-Raspberry-Pi">https://github.com/timmalich/NodeJs-Raspberry-Pi</a></td> <td></td> <td>Install NodeJs on your Raspberry Pi 1, 2, 3, zero, and zero w</td> <td></td> <td> <td></td> </tr>
+      <tr> <td>timmalich</td> <td>kafka-docker</td> <td><a href="https://github.com/timmalich/kafka-docker">https://github.com/timmalich/kafka-docker</a></td> <td></td> <td>Dockerfile for Apache Kafka</td> <td></td> <td> <td></td> </tr>
+      <tr> <td>timmalich</td> <td>kali-rpi-luks-crypt</td> <td><a href="https://github.com/timmalich/kali-rpi-luks-crypt">https://github.com/timmalich/kali-rpi-luks-crypt</a></td> <td></td> <td>Full disk encryption for Kali on Raspberry using LUKS</td> <td></td> <td> <td></td> </tr>
+      <tr> <td>timmalich</td> <td>multi-file-swagger-example</td> <td><a href="https://github.com/timmalich/multi-file-swagger-example">https://github.com/timmalich/multi-file-swagger-example</a></td> <td></td> <td>Multi-file Swagger example</td> <td></td> <td> <td></td> </tr>
+    </tbody>
+  </table>
+  <script>
+    function sortTable(n) {
+      const table = document.getElementById("repoTable");
+      const rows = Array.from(table.tBodies[0].rows);
+      const currentDir = table.getAttribute("data-sort-dir") === "asc" ? "desc" : "asc";
+
+      rows.sort((rowA, rowB) => {
+        const cellA = rowA.cells[n].textContent.toLowerCase();
+        const cellB = rowB.cells[n].textContent.toLowerCase();
+        return currentDir === "asc" ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+      });
+
+      rows.forEach(row => table.tBodies[0].appendChild(row));
+      table.setAttribute("data-sort-dir", currentDir);
+    }
+
+    function filterColumn(columnIndex) {
+      const table = document.getElementById("repoTable");
+      const rows = table.getElementsByTagName("tr");
+      const input = table.tHead.rows[0].cells[columnIndex].getElementsByTagName("input")[0];
+      const filter = input.value.toLowerCase();
+
+      for (let i = 1; i < rows.length; i++) { // Skip the header row
+        const cell = rows[i].cells[columnIndex];
+        if (cell) {
+          const text = cell.textContent.toLowerCase();
+          rows[i].style.display = text.includes(filter) ? "" : "none";
+        }
+      }
+    }
+
+     function filterTable() {
+      const input = document.getElementById("searchBarInput");
+      const filter = input.value.toLowerCase();
+      const table = document.getElementById("repoTable");
+      const rows = table.getElementsByTagName("tr");
+
+      for (let i = 1; i < rows.length; i++) { // Skip the header row
+        const cells = rows[i].getElementsByTagName("td");
+        let match = false;
+
+        for (let j = 0; j < cells.length; j++) {
+          if (cells[j] && cells[j].textContent.toLowerCase().includes(filter)) {
+            match = true;
+            break;
+          }
+        }
+
+        rows[i].style.display = match ? "" : "none";
+      }
+    }
+  </script>
+</body>
+</html>
