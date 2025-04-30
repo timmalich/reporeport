@@ -163,4 +163,8 @@ To extend the report with additional metadata from the configuration file:
 1. Create a personal access token with sufficient permissions to read the repositories in the organizations.
 2. Save this PAT in the secrets of this repository as `GH_TOKEN`. (Settings > Secrets and variables > Actions > New repository secret).
 3. Allow actions to write to the repository (Settings > Actions > General > Workflow permissions > Read and write permissions).
-4. Run the GitHub action "Generate GitHub Report" and find the results in the branch "report-results"
+4. Run the GitHub action "Generate GitHub Report" and find the results in the branch "report-results":
+   1. [results/report.md](results/report.md)
+   2. [results/report.csv](results/report.csv)
+   3. [results/report.html](results/report.html)
+
