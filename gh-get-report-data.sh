@@ -20,7 +20,7 @@ mkdir -p "$BUILD_DIR"
 #############################################
 fetch_codeowners() {
   local output_file="$BUILD_DIR/${ORG}_${REPONAME}_codeowners.json"
-  gh api repos/"$ORG"/"$REPONAME"/contents/.github/CODEOWNERS \
+  gh api --hostname "$HOSTNAME" repos/"$ORG"/"$REPONAME"/contents/.github/CODEOWNERS \
     --jq '.' \
     > "$output_file" \
     || echo '{}' > "$output_file"
@@ -28,7 +28,7 @@ fetch_codeowners() {
 
 fetch_commits() {
   local output_file="$BUILD_DIR/${ORG}_${REPONAME}_latest_commit.json"
-  gh api repos/"$ORG"/"$REPONAME"/commits \
+  gh api --hostname "$HOSTNAME" repos/"$ORG"/"$REPONAME"/commits \
     --jq '.[0]' \
     > $output_file \
     || echo '{}' > "$output_file"
@@ -36,7 +36,7 @@ fetch_commits() {
 
 fetch_languages() {
   local output_file="$BUILD_DIR/${ORG}_${REPONAME}_languages.json"
-  gh api repos/"$ORG"/"$REPONAME"/languages \
+  gh api --hostname "$HOSTNAME" repos/"$ORG"/"$REPONAME"/languages \
     --jq '.' \
     > $output_file\
     || echo '{}' > "$output_file"
@@ -45,7 +45,7 @@ fetch_languages() {
 fetch_contributors() {
   local output_file="$BUILD_DIR/${ORG}_${REPONAME}_contributors.json"
   # sorted by contributions desc
-  gh api repos/"$ORG"/"$REPONAME"/contributors \
+  gh api --hostname "$HOSTNAME" repos/"$ORG"/"$REPONAME"/contributors \
     > $output_file\
     || echo '[]' > "$output_file"
 }
@@ -53,7 +53,7 @@ fetch_contributors() {
 
 for ORG in "${ORGS[@]}"; do
   echo "▶️ Fetching repo list for $ORG…"
-  gh repo list "$ORG" \
+  GH_HOST=$HOSTNAME gh repo list "$ORG" \
     --limit 1000 \
     --json name,url,description \
     > "$BUILD_DIR/${ORG}_repolist.json"
