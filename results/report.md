@@ -1,5 +1,5 @@
-| Org | Repo Name | Repo URI | Component | Description | Code Owners | Experts | Notes |
-|-----|-----------|----------|-----------|-------------|-------------|---------|-------|
+| Org | Repo Name | Repo URI | Component | Description | Code Owners | Experts | Notes | Latest commit | Commit date | Top contributor | Contri Commits | Languages |
+|-----|-----------|----------|-----------|-------------|-------------|---------|-------|---------------|-------------|-----------------|----------------|-----------|
 | timmalich | reporeport | [reporeport](https://github.com/timmalich/reporeport) | just fun | Simple scraper to generate are report about all repositories across multiple organizations | timmalich  | Tim | Was just to lazy to create the excel for more than 200 repos by hand.<br /> Might got a bit carried away though. | f530dfc17b24d38d72bb28ef94f5fc4941c969fb | 2025-04-30T23:52:43Z | timmalich | 7 | HTML,Shell 
 | timmalich | edukiz | [edukiz](https://github.com/timmalich/edukiz) | just fun | Simple HTML/JS educational games for children |  | Tim | Yeah, we got notes | 348580de5a53a8b0057e5e4b833223f2b76e6be7 | 2022-01-25T18:47:36Z | timmalich | 174 | HTML,JavaScript,Shell,Vue 
 | timmalich | openiam | [openiam](https://github.com/timmalich/openiam) |  | Dummy project for job candidates  |  |  |  | fb4584d3fcaf68434a5d8184338bb1455dee72e8 | 2021-02-26T15:49:32Z | timmalich | 5 | CSS,HTML,Java,JavaScript,SCSS,Scala,Shell,TypeScript 
