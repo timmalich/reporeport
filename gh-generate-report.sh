@@ -16,8 +16,8 @@ EOF
 
 # — README.md Header
 cat > "$OUT_MD" <<'EOF'
-| Org | Repo Name | Repo URI | Component | Description | Code Owners | Experts | Notes |
-|-----|-----------|----------|-----------|-------------|-------------|---------|-------|
+| Org | Repo Name | Repo URI | Component | Description | Code Owners | Experts | Notes | Latest commit | Commit date | Top contributor | Contri Commits | Languages |
+|-----|-----------|----------|-----------|-------------|-------------|---------|-------|---------------|-------------|-----------------|----------------|-----------|
 EOF
 
 # — HTML Header
@@ -49,31 +49,30 @@ cat > "$OUT_HTML" <<'EOF'
         <th onclick="sortTable(5)">Code Owners<br><input type="text" onkeyup="filterColumn(5)" placeholder="Filter Code Owners"></th>
         <th onclick="sortTable(6)">Experts<br><input type="text" onkeyup="filterColumn(6)" placeholder="Filter Experts"></th>
         <th onclick="sortTable(7)">Notes<br><input type="text" onkeyup="filterColumn(7)" placeholder="Filter Notes"></th>
-
+        <th onclick="sortTable(8)">Latest commit<br><input type="text" onkeyup="filterColumn(8)" placeholder="Filter Latest commit"></th>
+        <th onclick="sortTable(9)">Commit date<br><input type="text" onkeyup="filterColumn(9)" placeholder="Filter Commit date"></th>
+        <th onclick="sortTable(10)">Top contributor<br><input type="text" onkeyup="filterColumn(10)" placeholder="Filter contributor"></th>
+        <th onclick="sortTable(11)">Contri commits<br><input type="text" onkeyup="filterColumn(11)" placeholder="amount"></th>
+        <th onclick="sortTable(12)">Languages<br><input type="text" onkeyup="filterColumn(12)" placeholder="Filter Langs"></th>
       </tr>
     </thead>
     <tbody>
 EOF
+
 
 for REPOLIST in "$BUILD_DIR"/*_repolist.json; do
   ORG=$(basename "$REPOLIST" _repolist.json)
 
   jq -c '.[]' "$REPOLIST" | while read -r REC; do
     echo "Generating report for $ORG/${REC}."
+
     REPONAME=$(echo "$REC" | jq -r '.name')
+    DATA_PATH="$BUILD_DIR/${ORG}_${REPONAME}_"
+    #######################################################################################################
+    ##################################### DATA PARSING ####################################################
+    #######################################################################################################
     URI=$(echo "$REC" | jq -r '.url')
     DESC=$(echo "$REC" | jq -r '.description // ""' | sed 's/"/""/g')
-
-    # Parse distinct code owners from a github CODEOWNERS file
-    CO_FILE="$BUILD_DIR/${ORG}_${REPONAME}_codeowners.json"
-    CODEOWNERS=$(jq -r '.content // ""' "$CO_FILE" \
-    | base64 --decode 2>/dev/null \
-    | grep -vE '^\s*(#|$)' \
-    | awk '{print $NF}' \
-    | sort -u \
-    | tr '\n' ' ' \
-    | sed 's/"/""/g' \
-    || echo "")
 
     # load per-repo extras from config
     COMPONENT=$(jq -r --arg o "$ORG" --arg r "$REPONAME" \
@@ -83,14 +82,37 @@ for REPOLIST in "$BUILD_DIR"/*_repolist.json; do
     NOTES=$(jq -r --arg o "$ORG" --arg r "$REPONAME" \
       '.organizations[][$o][$r].notes // ""' "$CONFIG" | sed 's/"/""/g')
 
+    # Parse distinct code owners from a github CODEOWNERS file
+    CODEOWNERS=$(jq -r '.content // ""' "${DATA_PATH}codeowners.json" \
+    | base64 --decode 2>/dev/null \
+    | grep -vE '^\s*(#|$)' \
+    | awk '{print $NF}' \
+    | sort -u \
+    | tr '\n' ' ' \
+    | sed 's/"/""/g' \
+    || echo "")
+
+    LATEST_JSON="${DATA_PATH}latest_commit.json"
+    LATEST_SHA=$(jq -r '.sha' "$LATEST_JSON")
+    LATEST_DATE=$(jq -r '.commit.author.date' "$LATEST_JSON")
+
+    LANGS=$(jq -r 'keys | join(",")' "${DATA_PATH}languages.json")
+
+    CONTRIB_FILE="$BUILD_DIR/${ORG}_${REPONAME}_contributors.json"
+    TOP_CONTRIBUTOR=$(jq -r '.[0].login // ""' "$CONTRIB_FILE")
+    TOP_COMMITS=$(jq -r '.[0].contributions // 0' "$CONTRIB_FILE")
+
+    #######################################################################################################
+    ##################################### OUTPUT FORMATTING ###############################################
+    #######################################################################################################
     # CSV row
-    printf '"%s","%s","%s","%s","%s","%s","%s","%s"\n' \
+    printf '"%s","%s","%s","%s","%s","%s","%s","%s,"%s","%s","%s",%s,"%s"\n' \
       "$ORG" "$REPONAME" "$URI" "$COMPONENT" "$DESC" "$CODEOWNERS" \
-      "$EXPERTS" "$NOTES" \
+      "$EXPERTS" "$NOTES" "$LATEST_SHA" "$LATEST_DATE" "$TOP_CONTRIBUTOR" "$TOP_COMMITS" "$LANGS" \
       >> "$OUT_CSV"
 
     # .md row
-    echo "| $ORG | $REPONAME | [$REPONAME]($URI) | $COMPONENT | $DESC | $CODEOWNERS | $EXPERTS | $NOTES |" \
+    echo "| $ORG | $REPONAME | [$REPONAME]($URI) | $COMPONENT | $DESC | $CODEOWNERS | $EXPERTS | $NOTES | $LATEST_SHA | $LATEST_DATE | $TOP_CONTRIBUTOR | $TOP_COMMITS | $LANGS " \
       >> "$OUT_MD"
 
     # HTML row
@@ -103,6 +125,11 @@ for REPOLIST in "$BUILD_DIR"/*_repolist.json; do
          "<td>$CODEOWNERS</td>" \
          "<td>$EXPERTS" \
          "<td>$NOTES</td>" \
+         "<td>$LATEST_SHA</td>" \
+         "<td>$LATEST_DATE</td>" \
+         "<td>$TOP_CONTRIBUTOR</td>" \
+         "<td>$TOP_COMMITS</td>" \
+         "<td>$LANGS</td>" \
          "</tr>" \
       >> "$OUT_HTML"
   done
@@ -119,9 +146,15 @@ cat >> "$OUT_HTML" <<'EOF'
       const currentDir = table.getAttribute("data-sort-dir") === "asc" ? "desc" : "asc";
 
       rows.sort((rowA, rowB) => {
-        const cellA = rowA.cells[n].textContent.toLowerCase();
-        const cellB = rowB.cells[n].textContent.toLowerCase();
-        return currentDir === "asc" ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+        const cellA = rowA.cells[n].textContent.trim();
+        const cellB = rowB.cells[n].textContent.trim();
+
+        const isNumeric = !isNaN(cellA) && !isNaN(cellB);
+        if (isNumeric) {
+          return currentDir === "asc" ? cellA - cellB : cellB - cellA;
+        } else {
+          return currentDir === "asc" ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+        }
       });
 
       rows.forEach(row => table.tBodies[0].appendChild(row));
@@ -143,7 +176,7 @@ cat >> "$OUT_HTML" <<'EOF'
       }
     }
 
-     function filterTable() {
+    function filterTable() {
       const input = document.getElementById("searchBarInput");
       const filter = input.value.toLowerCase();
       const table = document.getElementById("repoTable");

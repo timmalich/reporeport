@@ -19,14 +19,35 @@ mkdir -p "$BUILD_DIR"
 # Functions that run on every repo found
 #############################################
 fetch_codeowners() {
-  local org="$1"
-  local repo="$2"
-  local output_file="$3"
-
-  gh api repos/"$org"/"$REPONAME"/contents/.github/CODEOWNERS \
+  local output_file="$BUILD_DIR/${ORG}_${REPONAME}_codeowners.json"
+  gh api repos/"$ORG"/"$REPONAME"/contents/.github/CODEOWNERS \
     --jq '.' \
     > "$output_file" \
     || echo '{}' > "$output_file"
+}
+
+fetch_commits() {
+  local output_file="$BUILD_DIR/${ORG}_${REPONAME}_latest_commit.json"
+  gh api repos/"$ORG"/"$REPONAME"/commits \
+    --jq '.[0]' \
+    > $output_file \
+    || echo '{}' > "$output_file"
+}
+
+fetch_languages() {
+  local output_file="$BUILD_DIR/${ORG}_${REPONAME}_languages.json"
+  gh api repos/"$ORG"/"$REPONAME"/languages \
+    --jq '.' \
+    > $output_file\
+    || echo '{}' > "$output_file"
+}
+
+fetch_contributors() {
+  local output_file="$BUILD_DIR/${ORG}_${REPONAME}_contributors.json"
+  # sorted by contributions desc
+  gh api repos/"$ORG"/"$REPONAME"/contributors \
+    > $output_file\
+    || echo '[]' > "$output_file"
 }
 #############################################
 
@@ -39,7 +60,10 @@ for ORG in "${ORGS[@]}"; do
 
   jq -r '.[].name' "$BUILD_DIR/${ORG}_repolist.json" | while read -r REPONAME; do
     echo "   ↳ $ORG/$REPONAME → CODEOWNERS"
-    fetch_codeowners "$ORG" "$REPONAME" "$BUILD_DIR/${ORG}_${REPONAME}_codeowners.json"
+    fetch_codeowners
+    fetch_commits
+    fetch_languages
+    fetch_contributors
   done
 done
 
